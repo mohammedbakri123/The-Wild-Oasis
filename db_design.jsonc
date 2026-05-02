@@ -1,0 +1,31 @@
+{
+    "cabins": {
+        "id":"int",
+        "created_at":"date",
+        "name": "text",
+        "maxCapacity" : "int",
+        "regularPrice": "money",
+        "discount": "money",
+        "description" : "text",
+        "image" : "text"
+    },
+    "guests": {
+        "id":"int",
+        "created_at" : "date",
+        "fullName" : "text",
+        "email": "text",
+        "nationalId": "text",
+        "nationality": "text",
+        "countryFlag": "text"
+    }
+    ,"settings": {
+        //this table should only contain one row, and we update it as needed
+        "id":"int",
+        "created_at":"date",
+        "minBookinglengh": "int",
+        "maxBookinglengh": "int",
+        "maxGuestsPerBooking": "int",
+        "breakfastPrice":"money"
+    }
+
+}
