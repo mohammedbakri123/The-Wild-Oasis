@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import type { Cabin } from "../types";
 import { formatCurrency } from "../../../core/utils/helpers";
+import Button from "../../../core/ui/Button";
+import { useDeleteCabin } from "../hooks/useCabins";
 interface CabinRowProps {
   cabin: Cabin;
 }
@@ -24,6 +26,7 @@ const Img = styled.img`
   object-fit: cover;
   object-position: center;
   transform: scale(1.5) translateX(-7px);
+  border-radius: var(--border-radius-tiny);
 `;
 
 const Cabin = styled.div`
@@ -49,6 +52,12 @@ const Discount = styled.div`
 `;
 
 export default function CabinRow({ cabin }: CabinRowProps) {
+  const deleteCabin = useDeleteCabin();
+  const handleDelete = (id: number) => {
+    console.log("Delete button clicked, id:", id);
+    deleteCabin.mutate(id); // Pass the cabin ID
+  };
+
   return (
     <TableRow>
       <Img src={cabin.image} />
@@ -56,6 +65,12 @@ export default function CabinRow({ cabin }: CabinRowProps) {
       <Capacity>fits up to {cabin.max_capacity} guests</Capacity>
       <Price>{formatCurrency(cabin.regular_price)}</Price>
       <Discount>{formatCurrency(cabin.discount)}</Discount>
+      <Button
+        onClick={() => handleDelete(cabin.id)}
+        disabled={deleteCabin.isPending}
+      >
+        Delete
+      </Button>
     </TableRow>
   );
 }

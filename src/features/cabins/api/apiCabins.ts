@@ -6,3 +6,17 @@ export async function getCabins(): Promise<Cabin[]> {
   if (error) throw new Error("Cabins could not be loaded");
   return data as Cabin[];
 }
+
+export async function deleteCabin(id: number): Promise<void> {
+  const { data, error } = await supabase
+    .from('cabins')
+    .delete()
+    .eq('id', id)
+    .select();  // This forces Supabase to return deleted row
+  if (error) throw new Error("Cabin could not be deleted");
+  
+  // If data is empty but no error, RLS likely blocked it
+  if (!data || data.length === 0) {
+    throw new Error("Cabin could not be deleted - access denied");
+  }
+}
