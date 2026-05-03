@@ -26,6 +26,22 @@
         "maxBookinglengh": "int",
         "maxGuestsPerBooking": "int",
         "breakfastPrice":"money"
+    },
+    "bookings":{
+        "id":"int",
+        "created_at":"date",
+        "startDate":"date",
+        "endDate" : "date",
+        "numNight":"int",
+        "numGuests":"int", 
+        "cabinPrice":"money",
+        "extraPrice":"money",
+        "totalPrice":"money",
+        "status": "text",
+        "hasBreakfast": "bool", 
+        "isPaid":"bool",
+        "observations":"text",
+        "guestId":"int",
+        "cabinId" : "int"
     }
-
 }
