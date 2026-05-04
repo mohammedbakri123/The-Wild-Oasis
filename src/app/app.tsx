@@ -13,6 +13,8 @@ import Settings from "../core/pages/Settings";
 import NewUsers from "../core/pages/Users";
 import GlobalStyles from "../core/styles/GlobalStyles";
 import Layout from "../core/layout/layout";
+import { Toaster } from "react-hot-toast";
+import ToastProvider from "../core/ui/ToastProvider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -55,6 +57,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      <ToastProvider />
     </QueryClientProvider>
   );
 }

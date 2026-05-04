@@ -3,6 +3,7 @@ import type { Cabin } from "../types";
 import { formatCurrency } from "../../../core/utils/helpers";
 import Button from "../../../core/ui/Button";
 import { useDeleteCabin } from "../hooks/useCabins";
+import toast from "react-hot-toast";
 interface CabinRowProps {
   cabin: Cabin;
 }
@@ -54,7 +55,7 @@ const Discount = styled.div`
 export default function CabinRow({ cabin }: CabinRowProps) {
   const deleteCabin = useDeleteCabin();
   const handleDelete = (id: number) => {
-    console.log("Delete button clicked, id:", id);
+    toast.success("you clicked that");
     deleteCabin.mutate(id); // Pass the cabin ID
   };
 
