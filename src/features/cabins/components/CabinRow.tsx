@@ -55,7 +55,6 @@ const Discount = styled.div`
 export default function CabinRow({ cabin }: CabinRowProps) {
   const deleteCabin = useDeleteCabin();
   const handleDelete = (id: number) => {
-    toast.success("you clicked that");
     deleteCabin.mutate(id); // Pass the cabin ID
   };
 

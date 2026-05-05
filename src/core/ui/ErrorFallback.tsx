@@ -29,3 +29,17 @@ const Box = styled.div`
     color: var(--color-grey-500);
   }
 `;
+interface ErrorProps {
+  header: string;
+  message: string;
+}
+export default function ErrorFallback({ header, message }: ErrorProps) {
+  return (
+    <StyledErrorFallback>
+      <Box>
+        <h1>{header}</h1>
+        <p>{message}</p>
+      </Box>
+    </StyledErrorFallback>
+  );
+}

@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { useCabins } from "../hooks/useCabins";
 import Spinner from "../../../core/ui/Spinner";
 import CabinRow from "./CabinRow";
+import toast from "react-hot-toast";
+import ErrorFallback from "../../../core/ui/ErrorFallback";
 
 const Table = styled.div`
   border: 1px solid var(--color-grey-200);
@@ -29,7 +31,13 @@ const TableHeader = styled.header`
 
 export default function CabinTable() {
   const { data: cabins, isLoading, error } = useCabins();
-  console.log(cabins, isLoading, error);
+
+  if (error) {
+    toast.error(error.message);
+    return (
+      <ErrorFallback header="Faild to Fetch Cabins" message={error.message} />
+    );
+  }
 
   if (isLoading) return <Spinner />;
 

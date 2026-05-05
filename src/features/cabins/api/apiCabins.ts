@@ -8,11 +8,15 @@ export async function getCabins(): Promise<Cabin[]> {
 }
 
 export async function deleteCabin(id: number): Promise<void> {
-  const { data, error } = await supabase
+  const response = await supabase
     .from('cabins')
     .delete()
     .eq('id', id)
     .select();  // This forces Supabase to return deleted row
+
+    console.log(response);
+
+   const { data, error } = response;
   if (error) throw new Error("Cabin could not be deleted");
   
   // If data is empty but no error, RLS likely blocked it
