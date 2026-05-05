@@ -1,5 +1,5 @@
 export interface Cabin {
-  id: string;
+  id: number;
   name: string;
   max_capacity: number;
   regular_price: number;
@@ -10,9 +10,8 @@ export interface Cabin {
 }
 export interface CabinFormData {
   name: string;
-  maxCapacity: number;
-  regularPrice: number;
-  discount?: number;
+  max_capacity: number;
+  regular_price: number;
+  discount: number;
   description: string;
-  image: string;
-}
+  image: string;}

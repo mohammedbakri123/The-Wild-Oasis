@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteCabin, getCabins } from "../api/apiCabins";
-import type { Cabin } from "../types";
+import { createCabin, deleteCabin, getCabins } from "../api/apiCabins";
+import type { Cabin, CabinFormData } from "../types";
 import toast from "react-hot-toast";
 
 export function useCabins() {
@@ -22,13 +22,17 @@ export function useDeleteCabin() {
   });
 }
 
-// export function useCreateCabin() {
-//   const queryClient = useQueryClient();
-//   return useMutation<Cabin, Error, CabinFormData>({
-//     mutationFn: createCabin,
-//     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["cabins"] }),
-//   });
-// }
+export function useCreateCabin() {
+  const queryClient = useQueryClient();
+  return useMutation<Cabin[], Error, CabinFormData>({
+    mutationFn: createCabin,
+  onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cabins"] });
+      toast.success("Cabin Created successfully") 
+       },
+    onError: (err) => {toast.error(err.message)},
+  });
+}
 // export function useUpdateCabin() {
 //   const queryClient = useQueryClient();
 //   return useMutation<Cabin, Error, { id: string; data: Partial<CabinFormData> }>({

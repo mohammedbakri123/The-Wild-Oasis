@@ -3,7 +3,6 @@ import type { Cabin } from "../types";
 import { formatCurrency } from "../../../core/utils/helpers";
 import Button from "../../../core/ui/Button";
 import { useDeleteCabin } from "../hooks/useCabins";
-import toast from "react-hot-toast";
 interface CabinRowProps {
   cabin: Cabin;
 }
