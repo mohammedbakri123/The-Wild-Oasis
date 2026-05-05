@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import {
   useForm,
   type SubmitErrorHandler,
@@ -13,44 +12,7 @@ import Textarea from "../../../core/ui/Textarea";
 
 import type { CabinFormData, Cabin } from "../types/index";
 import { useCreateCabin } from "../hooks/useCabins";
-
-//needed by use form hook,
-
-const FormRow = styled.div`
-  display: grid;
-  align-items: center;
-  grid-template-columns: 24rem 1fr 1.2fr;
-  gap: 2.4rem;
-
-  padding: 1.2rem 0;
-
-  &:first-child {
-    padding-top: 0;
-  }
-
-  &:last-child {
-    padding-bottom: 0;
-  }
-
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--color-grey-100);
-  }
-
-  &:has(button) {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1.2rem;
-  }
-`;
-
-const Label = styled.label`
-  font-weight: 500;
-`;
-
-const Error = styled.span`
-  font-size: 1.4rem;
-  color: var(--color-red-700);
-`;
+import FormRow from "./FormRow";
 
 interface CabinRowProps {
   cabin: Cabin;
@@ -74,9 +36,7 @@ function CreateCabinForm({ cabin }: CabinRowProps) {
 
   return (
     <Form onSubmit={handleSubmit(onSubmit, onError)}>
-      <FormRow>
-        <Label htmlFor="name">Cabin name</Label>
-
+      <FormRow label="Cabin name" error={errors?.name?.message}>
         <Input
           type="text"
           id="name"
@@ -84,10 +44,8 @@ function CreateCabinForm({ cabin }: CabinRowProps) {
             required: "this is required",
           })}
         />
-        {errors?.name && <Error>{errors.name.message}</Error>}
       </FormRow>
-      <FormRow>
-        <Label htmlFor="maxCapacity">Maximum capacity</Label>
+      <FormRow label="Maximum capacity" error={errors?.max_capacity?.message}>
         <Input
           type="number"
           id="max_capacity"
@@ -99,11 +57,9 @@ function CreateCabinForm({ cabin }: CabinRowProps) {
             },
           })}
         />
-        {errors?.max_capacity && <Error>{errors.max_capacity.message}</Error>}
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor="regularPrice">Regular price</Label>
+      <FormRow label="Regular price" error={errors?.regular_price?.message}>
         <Input
           type="number"
           id="regular_price"
@@ -111,11 +67,9 @@ function CreateCabinForm({ cabin }: CabinRowProps) {
             required: "this is required",
           })}
         />
-        {errors?.regular_price && <Error>{errors.regular_price.message}</Error>}
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor="discount">Discount</Label>
+      <FormRow label="Discount" error={errors?.discount?.message}>
         <Input
           type="number"
           id="discount"
@@ -127,11 +81,12 @@ function CreateCabinForm({ cabin }: CabinRowProps) {
               "Discount should be less then the Price",
           })}
         />
-        {errors?.discount && <Error>{errors.discount.message}</Error>}
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor="description">Description for website</Label>
+      <FormRow
+        label="Description for website"
+        error={errors?.description?.message}
+      >
         <Textarea
           id="description"
           defaultValue=""
@@ -139,20 +94,20 @@ function CreateCabinForm({ cabin }: CabinRowProps) {
             required: "this is required",
           })}
         />
-        {errors?.description && <Error>{errors.description.message}</Error>}
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor="image">Cabin photo</Label>
+      <FormRow label="Cabin photo">
         <FileInput id="image" accept="image/*" {...register("image")} />
       </FormRow>
 
-      <FormRow>
+      <FormRow label="">
         {/* type is an HTML attribute! */}
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button>{mode == "create" ? "Create cabin" : "Edit cabin"}</Button>
+        <Button type="submit">
+          {mode == "create" ? "Create cabin" : "Edit cabin"}
+        </Button>
       </FormRow>
     </Form>
   );
