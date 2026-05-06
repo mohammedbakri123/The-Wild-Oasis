@@ -10,16 +10,18 @@ import type { CabinFormData, Cabin } from "../types/index";
 import { useCreateCabin, useEditCabin } from "../hooks/useCabins";
 import FormRow from "./FormRow";
 
-interface CabinRowProps {
+interface CreateCabinFormProps {
   cabinToEdit?: Cabin;
+  onCloseModal?: () => void;
 }
 
-function CreateCabinForm({ cabinToEdit }: CabinRowProps) {
+function CreateCabinForm({ cabinToEdit, onCloseModal }: CreateCabinFormProps) {
   const isEditSession = Boolean(cabinToEdit?.id);
 
   const { isCreating, createCabin } = useCreateCabin();
   const { isEditing, editCabin } = useEditCabin();
   const isWorking = isCreating || isEditing;
+
   const {
     register,
     handleSubmit,
@@ -29,13 +31,13 @@ function CreateCabinForm({ cabinToEdit }: CabinRowProps) {
   } = useForm<CabinFormData>({
     defaultValues: isEditSession ? cabinToEdit : {},
   });
+
   const onSubmit: SubmitHandler<CabinFormData> = (data) => {
-    console.log(data);
     // If it's a string, use it. If it's a FileList, take the first file.
     const image = typeof data.image === "string" ? data.image : data.image[0];
 
-    //this is VERY Important because defaultValues pass a Cabin instead of CabinFormData,
-    //  that use supabase to throw error
+    // This is VERY Important because defaultValues pass a Cabin instead of CabinFormData,
+    // that cause supabase to throw error
     const cleanData = {
       name: data.name,
       max_capacity: data.max_capacity,
@@ -43,33 +45,53 @@ function CreateCabinForm({ cabinToEdit }: CabinRowProps) {
       discount: data.discount,
       description: data.description,
     };
+
     if (isEditSession) {
       // Use the Edit hook
       editCabin(
         { newCabinData: { ...cleanData, image }, id: cabinToEdit!.id },
-        { onSuccess: (updatedCabin) => reset(updatedCabin) },
+        {
+          onSuccess: (data) => {
+            reset();
+            onCloseModal?.();
+          },
+        },
       );
     } else {
       // Use the Create hook
-      createCabin({ ...data, image: image }, { onSuccess: () => reset() });
+      createCabin(
+        { ...data, image: image },
+        {
+          onSuccess: (data) => {
+            reset();
+            onCloseModal?.();
+          },
+        },
+      );
     }
   };
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form
+      onSubmit={handleSubmit(onSubmit)}
+      type={onCloseModal ? "modal" : "regular"}
+    >
       <FormRow label="Cabin name" error={errors?.name?.message}>
         <Input
           type="text"
           id="name"
+          disabled={isWorking}
           {...register("name", {
             required: "this is required",
           })}
         />
       </FormRow>
+
       <FormRow label="Maximum capacity" error={errors?.max_capacity?.message}>
         <Input
           type="number"
           id="max_capacity"
+          disabled={isWorking}
           {...register("max_capacity", {
             required: "this is required",
             min: {
@@ -84,6 +106,7 @@ function CreateCabinForm({ cabinToEdit }: CabinRowProps) {
         <Input
           type="number"
           id="regular_price"
+          disabled={isWorking}
           {...register("regular_price", {
             required: "this is required",
           })}
@@ -94,6 +117,7 @@ function CreateCabinForm({ cabinToEdit }: CabinRowProps) {
         <Input
           type="number"
           id="discount"
+          disabled={isWorking}
           defaultValue={0}
           {...register("discount", {
             required: "this is required",
@@ -111,6 +135,7 @@ function CreateCabinForm({ cabinToEdit }: CabinRowProps) {
         <Textarea
           id="description"
           defaultValue=""
+          disabled={isWorking}
           {...register("description", {
             required: "this is required",
           })}
@@ -128,9 +153,19 @@ function CreateCabinForm({ cabinToEdit }: CabinRowProps) {
         />
       </FormRow>
 
-      <Button disabled={isWorking}>
-        {isEditSession ? "Edit cabin" : "Create new cabin"}
-      </Button>
+      <FormRow>
+        {/* type is an HTML attribute! */}
+        <Button
+          variation="secondary"
+          type="reset"
+          onClick={() => onCloseModal?.()}
+        >
+          Cancel
+        </Button>
+        <Button disabled={isWorking}>
+          {isEditSession ? "Edit cabin" : "Create new cabin"}
+        </Button>
+      </FormRow>
     </Form>
   );
 }

@@ -74,7 +74,7 @@ export async function updateCabin(
       .upload(imageName, newCabinData.image);
 
     if (storageError) {
-      console.error(storageError);
+      // console.error(storageError);
       throw new Error("Cabin image could not be uploaded");
     }
   }
@@ -88,7 +88,7 @@ export async function updateCabin(
     .single();
 
   if (error) {
-    console.error(error);
+    // console.error(error);
     throw new Error("Cabin could not be updated");
   }
   return data as Cabin;

@@ -1,29 +1,30 @@
-import { useState } from "react";
 import Heading from "../../core/ui/Heading";
 import Row from "../../core/ui/Row";
 import CabinTable from "./components/CabinTable";
 import Button from "../../core/ui/Button";
 import CreateCabinForm from "./components/CreateCabinForm";
+import Modal from "../../core/ui/Modal";
 
 function Cabins() {
-  const [showForm, setShowForm] = useState(false);
   return (
     <>
       <Row type="horizontal">
         <Heading as="h1">All cabins</Heading>
-        <p>FIlter / Sort</p>
+        <p>Filter / Sort</p>
       </Row>
-      <Row>
+
+      <Row type="vertical">
         <CabinTable />
+
+        <Modal>
+          <Modal.Open opens="cabin-form">
+            <Button>Add new cabin</Button>
+          </Modal.Open>
+          <Modal.Window name="cabin-form">
+            <CreateCabinForm />
+          </Modal.Window>
+        </Modal>
       </Row>
-      <Button
-        onClick={() => {
-          setShowForm((c) => !c);
-        }}
-      >
-        Show Form
-      </Button>
-      {showForm && <CreateCabinForm />}
     </>
   );
 }
