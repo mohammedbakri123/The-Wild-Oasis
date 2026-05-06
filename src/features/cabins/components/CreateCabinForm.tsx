@@ -1,8 +1,4 @@
-import {
-  useForm,
-  type SubmitErrorHandler,
-  type SubmitHandler,
-} from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 
 import Input from "../../../core/ui/Input";
 import Form from "../../../core/ui/Form";
@@ -29,13 +25,16 @@ function CreateCabinForm({ cabin }: CabinRowProps) {
     formState: { errors },
     getValues,
   } = useForm<CabinFormData>();
-  const onSubmit: SubmitHandler<CabinFormData> = (data) =>
-    createCabin.mutate(data);
-  const onError: SubmitErrorHandler<CabinFormData> = (errors) =>
-    console.log(errors);
+  const onSubmit: SubmitHandler<CabinFormData> = (data) => {
+    // console.log(data);
+    createCabin.mutate({ ...data, image: data.image.at(0) });
+  };
+  //No need for that anymore
+  // const onError: SubmitErrorHandler<CabinFormData> = (errors) =>
+  //   console.log(errors);
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <FormRow label="Cabin name" error={errors?.name?.message}>
         <Input
           type="text"
@@ -97,11 +96,18 @@ function CreateCabinForm({ cabin }: CabinRowProps) {
       </FormRow>
 
       <FormRow label="Cabin photo">
-        <FileInput id="image" accept="image/*" {...register("image")} />
+        <FileInput
+          id="image"
+          accept="image/*"
+          {...register("image", {
+            required: "this is required",
+          })}
+        />
       </FormRow>
 
       <FormRow label="">
-        {/* type is an HTML attribute! */}
+        {" "}
+        \{/* type is an HTML attribute! */}
         <Button variation="secondary" type="reset">
           Cancel
         </Button>

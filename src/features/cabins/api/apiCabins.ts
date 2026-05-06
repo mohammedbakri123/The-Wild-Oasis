@@ -1,4 +1,4 @@
-import { supabase } from "../../../core/services/supabase";
+import { supabase,supabaseUrl } from "../../../core/services/supabase";
 import type { Cabin, CabinFormData } from "../types";
 
 export async function getCabins(): Promise<Cabin[]> {
@@ -26,22 +26,35 @@ export async function deleteCabin(id: number): Promise<void> {
 }
 
 export async function createCabin(cabin: CabinFormData):Promise<Cabin[]> {
-  
-const response = await supabase
-  .from('cabins')
-  .insert([
-    cabin,
-  ])
-  .select();
 
-  const {data, error} = response;
+   // 1. Create a unique image name and the path
+    const imageName = `${Math.random()}-${cabin.image.name}`.replaceAll("/", "");
 
-  if (error) throw new Error("Cabin could not be created");
-  
-  // If data is empty but no error, RLS likely blocked it
-  if (!data || data.length === 0) {
-    throw new Error("Cabin could not be created - access denied");
-  }
+    // This is the URL that will be stored in the 'image' column of your 'cabins' table
+    const imagePath = `${supabaseUrl}/storage/v1/object/public/cabins-images/${imageName}`;
 
-  return data as Cabin[];
+     // 2. Upload the image to the 'cabin-images' bucket
+    const { error: storageError } = await supabase.storage
+        .from("cabin-images")
+        .upload(imageName, cabin.image);
+
+    if (storageError) {
+        console.error(storageError);
+        throw new Error("Cabin image could not be uploaded");
+      }
+       // 3. Create the cabin in the database
+      const { data, error } = await supabase
+        .from("cabins")
+        .insert([{ ...cabin, image: imagePath }]) // Use the imagePath URL here
+        .select();
+   
+      if (error || !data || data.length === 0) {
+        console.error(error);
+        // Optional: If there was an error creating the cabin, delete the uploaded image
+        await supabase.storage.from("cabin-images").remove([imageName]);
+        throw new Error("Cabin could not be created");
+      }
+   
+      return data as Cabin[];
+
 }
