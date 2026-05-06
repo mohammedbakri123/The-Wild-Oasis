@@ -7,31 +7,53 @@ import FileInput from "../../../core/ui/FileInput";
 import Textarea from "../../../core/ui/Textarea";
 
 import type { CabinFormData, Cabin } from "../types/index";
-import { useCreateCabin } from "../hooks/useCabins";
+import { useCreateCabin, useEditCabin } from "../hooks/useCabins";
 import FormRow from "./FormRow";
 
 interface CabinRowProps {
-  cabin: Cabin;
+  cabinToEdit?: Cabin;
 }
 
-function CreateCabinForm({ cabin }: CabinRowProps) {
-  const mode = cabin ? "edit" : "create";
+function CreateCabinForm({ cabinToEdit }: CabinRowProps) {
+  const isEditSession = Boolean(cabinToEdit?.id);
 
-  const createCabin = useCreateCabin();
-
+  const { isCreating, createCabin } = useCreateCabin();
+  const { isEditing, editCabin } = useEditCabin();
+  const isWorking = isCreating || isEditing;
   const {
     register,
     handleSubmit,
     formState: { errors },
     getValues,
-  } = useForm<CabinFormData>();
+    reset,
+  } = useForm<CabinFormData>({
+    defaultValues: isEditSession ? cabinToEdit : {},
+  });
   const onSubmit: SubmitHandler<CabinFormData> = (data) => {
-    // console.log(data);
-    createCabin.mutate({ ...data, image: data.image.at(0) });
+    console.log(data);
+    // If it's a string, use it. If it's a FileList, take the first file.
+    const image = typeof data.image === "string" ? data.image : data.image[0];
+
+    //this is VERY Important because defaultValues pass a Cabin instead of CabinFormData,
+    //  that use supabase to throw error
+    const cleanData = {
+      name: data.name,
+      max_capacity: data.max_capacity,
+      regular_price: data.regular_price,
+      discount: data.discount,
+      description: data.description,
+    };
+    if (isEditSession) {
+      // Use the Edit hook
+      editCabin(
+        { newCabinData: { ...cleanData, image }, id: cabinToEdit!.id },
+        { onSuccess: (updatedCabin) => reset(updatedCabin) },
+      );
+    } else {
+      // Use the Create hook
+      createCabin({ ...data, image: image }, { onSuccess: () => reset() });
+    }
   };
-  //No need for that anymore
-  // const onError: SubmitErrorHandler<CabinFormData> = (errors) =>
-  //   console.log(errors);
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -100,21 +122,15 @@ function CreateCabinForm({ cabin }: CabinRowProps) {
           id="image"
           accept="image/*"
           {...register("image", {
-            required: "this is required",
+            // Validation: Image is only required if we are NOT editing
+            required: isEditSession ? false : "This field is required",
           })}
         />
       </FormRow>
 
-      <FormRow label="">
-        {" "}
-        \{/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset">
-          Cancel
-        </Button>
-        <Button type="submit">
-          {mode == "create" ? "Create cabin" : "Edit cabin"}
-        </Button>
-      </FormRow>
+      <Button disabled={isWorking}>
+        {isEditSession ? "Edit cabin" : "Create new cabin"}
+      </Button>
     </Form>
   );
 }

@@ -3,6 +3,9 @@ import type { Cabin } from "../types";
 import { formatCurrency } from "../../../core/utils/helpers";
 import Button from "../../../core/ui/Button";
 import { useDeleteCabin } from "../hooks/useCabins";
+import Row from "../../../core/ui/Row";
+import { useState } from "react";
+import CreateCabinForm from "./CreateCabinForm";
 interface CabinRowProps {
   cabin: Cabin;
 }
@@ -57,19 +60,26 @@ export default function CabinRow({ cabin }: CabinRowProps) {
     deleteCabin.mutate(id); // Pass the cabin ID
   };
 
+  const [showForm, setShowForm] = useState(false);
   return (
-    <TableRow>
-      <Img src={cabin.image} />
-      <Cabin>{cabin.name}</Cabin>
-      <Capacity>fits up to {cabin.max_capacity} guests</Capacity>
-      <Price>{formatCurrency(cabin.regular_price)}</Price>
-      <Discount>{formatCurrency(cabin.discount)}</Discount>
-      <Button
-        onClick={() => handleDelete(cabin.id)}
-        disabled={deleteCabin.isPending}
-      >
-        Delete
-      </Button>
-    </TableRow>
+    <>
+      <TableRow>
+        <Img src={cabin.image} />
+        <Cabin>{cabin.name}</Cabin>
+        <Capacity>fits up to {cabin.max_capacity} guests</Capacity>
+        <Price>{formatCurrency(cabin.regular_price)}</Price>
+        <Discount>{formatCurrency(cabin.discount)}</Discount>
+        <Row>
+          <Button
+            onClick={() => handleDelete(cabin.id)}
+            disabled={deleteCabin.isPending}
+          >
+            Delete
+          </Button>
+          <Button onClick={() => setShowForm((v) => !v)}>Edit</Button>
+        </Row>
+      </TableRow>
+      {showForm && <CreateCabinForm cabinToEdit={cabin} />}
+    </>
   );
 }

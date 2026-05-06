@@ -14,5 +14,6 @@ export interface CabinFormData {
   regular_price: number;
   discount: number;
   description: string;
+  //this may take image file (for Create) or string (for Edit)
   image: any; 
 }

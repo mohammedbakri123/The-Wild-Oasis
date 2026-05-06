@@ -19,6 +19,7 @@ const types = {
 
 const StyledRow = styled.div<{ $type: string }>`
   display: flex;
+  gap: 10px;
   ${(props) => props.$type && types[props.$type as keyof typeof types]}
 `;
 
