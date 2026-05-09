@@ -1,12 +1,14 @@
 import styled from "styled-components";
-import { HiPencil, HiTrash } from "react-icons/hi2";
+
 import type { Cabin } from "../types";
 import { formatCurrency } from "../../../core/utils/helpers";
-import Button from "../../../core/ui/Button";
-import { useDeleteCabin } from "../hooks/useCabins";
+import { useCreateCabin, useDeleteCabin } from "../hooks/useCabins";
 import CreateCabinForm from "./CreateCabinForm";
 import Modal from "../../../core/ui/Modal";
-import ConfirmDelete from "../../../core/ui/ConfirmDelete";
+import ConfirmDialog from "../../../core/ui/ConfirmDialog";
+
+import { HiPencil, HiTrash } from "react-icons/hi2";
+import { HiOutlineDuplicate } from "react-icons/hi";
 
 interface CabinRowProps {
   cabin: Cabin;
@@ -58,6 +60,19 @@ const Discount = styled.div`
 
 export default function CabinRow({ cabin }: CabinRowProps) {
   const { isDeleting, deleteCabin } = useDeleteCabin();
+  const { isCreating, createCabin } = useCreateCabin();
+
+  function HandleDublicate() {
+    const cleanData = {
+      name: cabin.name,
+      max_capacity: cabin.max_capacity,
+      regular_price: cabin.regular_price,
+      discount: cabin.discount,
+      description: cabin.description,
+      image: cabin.image,
+    };
+    createCabin(cleanData);
+  }
 
   return (
     <TableRow>
@@ -97,10 +112,34 @@ export default function CabinRow({ cabin }: CabinRowProps) {
             </button>
           </Modal.Open>
           <Modal.Window name="delete">
-            <ConfirmDelete
-              resourceName="cabins"
+            <ConfirmDialog
+              title="Delete cabin"
+              message="Are you sure you want to delete this cabin permanently? This action cannot be undone."
+              buttonText="Delete"
               disabled={isDeleting}
               onConfirm={() => deleteCabin(cabin.id)}
+            />
+          </Modal.Window>
+          <Modal.Open opens="dublicate">
+            <button
+              style={{
+                border: "none",
+                background: "none",
+                cursor: "pointer",
+                padding: "0.4rem",
+              }}
+            >
+              <HiOutlineDuplicate />
+            </button>
+          </Modal.Open>
+          <Modal.Window name="dublicate">
+            <ConfirmDialog
+              title="Dublicate cabin"
+              message="Are you sure you want to Dublicate this cabin?"
+              buttonText="Dublicate"
+              buttonVariation="primary"
+              disabled={isCreating}
+              onConfirm={HandleDublicate}
             />
           </Modal.Window>
         </Modal>

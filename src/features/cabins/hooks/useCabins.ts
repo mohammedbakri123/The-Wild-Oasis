@@ -37,7 +37,7 @@ export function useDeleteCabin() {
 export function useCreateCabin() {
   const queryClient = useQueryClient();
   const { mutate: createCabin, isPending: isCreating } = useMutation<
-    Cabin[],
+    Cabin,
     Error,
     CabinFormData
   >({

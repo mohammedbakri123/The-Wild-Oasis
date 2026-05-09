@@ -20,24 +20,27 @@ const StyledConfirmDelete = styled.div`
   }
 `;
 
-function ConfirmDelete({
-  resourceName,
+function ConfirmDialog({
+  title,
+  message,
+  buttonText,
+  buttonVariation = "danger",
   onConfirm,
   disabled,
   onCloseModal,
 }: {
-  resourceName: string;
+  title: string;
+  message: string;
+  buttonText: string;
+  buttonVariation?: "primary" | "secondary" | "danger";
   onConfirm: () => void;
   disabled?: boolean;
   onCloseModal?: () => void;
 }) {
   return (
     <StyledConfirmDelete>
-      <Heading as="h3">Delete {resourceName}</Heading>
-      <p>
-        Are you sure you want to delete this {resourceName} permanently? This
-        action cannot be undone.
-      </p>
+      <Heading as="h3">{title}</Heading>
+      <p>{message}</p>
 
       <div>
         <Button
@@ -47,12 +50,16 @@ function ConfirmDelete({
         >
           Cancel
         </Button>
-        <Button variation="danger" disabled={disabled} onClick={onConfirm}>
-          Delete
+        <Button
+          variation={buttonVariation}
+          disabled={disabled}
+          onClick={onConfirm}
+        >
+          {buttonText}
         </Button>
       </div>
     </StyledConfirmDelete>
   );
 }
 
-export default ConfirmDelete;
+export default ConfirmDialog;
