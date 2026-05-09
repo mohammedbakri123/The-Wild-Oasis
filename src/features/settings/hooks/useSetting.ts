@@ -3,13 +3,13 @@ import type { Setting, SettingForm } from "../types";
 import { getSettings, updateSetting } from "../api/apiSettings";
 import toast from "react-hot-toast";
 
-export function useCabins() {
+export function useSettings() {
   return useQuery<Setting, Error>({
     queryKey: ["setting"],
     queryFn: getSettings,
   });
 }
-export function useEditCabin() {
+export function useEditSetting() {
   const queryClient = useQueryClient();
 
   const { mutate: editSetting, isPending: isEditing } = useMutation<

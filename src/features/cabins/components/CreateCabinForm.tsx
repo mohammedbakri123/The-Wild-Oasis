@@ -8,7 +8,7 @@ import Textarea from "../../../core/ui/Textarea";
 
 import type { CabinFormData, Cabin } from "../types/index";
 import { useCreateCabin, useEditCabin } from "../hooks/useCabins";
-import FormRow from "./FormRow";
+import FormRow from "../../../core/ui/FormRow";
 
 interface CreateCabinFormProps {
   cabinToEdit?: Cabin;
@@ -63,7 +63,7 @@ function CreateCabinForm({ cabinToEdit, onCloseModal }: CreateCabinFormProps) {
         { ...data, image: image },
         {
           onSuccess: (data) => {
-            reset();
+            reset(data);
             onCloseModal?.();
           },
         },
@@ -153,7 +153,7 @@ function CreateCabinForm({ cabinToEdit, onCloseModal }: CreateCabinFormProps) {
         />
       </FormRow>
 
-      <FormRow>
+      <FormRow label="">
         {/* type is an HTML attribute! */}
         <Button
           variation="secondary"

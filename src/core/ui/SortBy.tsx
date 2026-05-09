@@ -1,18 +1,31 @@
-import { type SelectHTMLAttributes } from "react";
+import { useSearchParams } from "react-router-dom";
+import Select from "./Select";
 
-interface SortByProps extends SelectHTMLAttributes<HTMLSelectElement> {
-  options?: { value: string; label: string }[];
+interface Option {
+  value: string;
+  label: string;
 }
 
-function SortBy({ options = [], ...props }: SortByProps) {
+interface SortByProps {
+  options: Option[];
+}
+
+function SortBy({ options }: SortByProps) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sortBy = searchParams.get("sortBy") || "";
+
+  function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    searchParams.set("sortBy", e.target.value);
+    setSearchParams(searchParams);
+  }
+
   return (
-    <select {...props}>
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
+    <Select
+      options={options}
+      type="white"
+      value={sortBy}
+      onChange={handleChange}
+    />
   );
 }
 
