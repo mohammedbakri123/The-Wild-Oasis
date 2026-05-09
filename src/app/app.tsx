@@ -9,11 +9,10 @@ import Bookings from "../core/pages/Bookings";
 import Cabins from "../features/cabins/Cabins";
 import Login from "../core/pages/Login";
 import PageNotFound from "../core/pages/PageNotFound";
-import Settings from "../core/pages/Settings";
+import Settings from "../features/settings/Settings";
 import NewUsers from "../core/pages/Users";
 import GlobalStyles from "../core/styles/GlobalStyles";
 import Layout from "../core/layout/layout";
-import { Toaster } from "react-hot-toast";
 import ToastProvider from "../core/ui/ToastProvider";
 
 const queryClient = new QueryClient({
