@@ -4,10 +4,11 @@ import Form from "../../../core/ui/Form";
 import FormRow from "../../../core/ui/FormRow";
 import Input from "../../../core/ui/Input";
 import Spinner from "../../../core/ui/Spinner";
-import { useSettings } from "../hooks/useSetting";
+import { useEditSetting, useSettings } from "../hooks/useSetting";
 
 function UpdateSettingsForm() {
   const { data: settings, isLoading, error } = useSettings();
+  const { editSetting, isEditing } = useEditSetting();
 
   if (isLoading) return <Spinner />;
 
@@ -18,6 +19,14 @@ function UpdateSettingsForm() {
     );
   }
 
+  function handleUpdate(e: React.ChangeEvent<HTMLInputElement>, field: string) {
+    const { value } = e.target;
+
+    if (!value) return;
+
+    editSetting({ [field]: value });
+  }
+
   return (
     <Form>
       <FormRow label="Minimum nights/booking">
@@ -25,6 +34,8 @@ function UpdateSettingsForm() {
           type="number"
           id="min-nights"
           defaultValue={settings?.min_booking_length}
+          disabled={isEditing}
+          onBlur={(e) => handleUpdate(e, "min_booking_length")}
         />
       </FormRow>
       <FormRow label="Maximum nights/booking">
@@ -32,6 +43,8 @@ function UpdateSettingsForm() {
           type="number"
           id="max-nights"
           defaultValue={settings?.max_booking_length}
+          disabled={isEditing}
+          onBlur={(e) => handleUpdate(e, "max_booking_length")}
         />
       </FormRow>
       <FormRow label="Maximum guests/booking">
@@ -39,6 +52,8 @@ function UpdateSettingsForm() {
           type="number"
           id="max-guests"
           defaultValue={settings?.max_guests_per_booking}
+          disabled={isEditing}
+          onBlur={(e) => handleUpdate(e, "max_guests_per_booking")}
         />
       </FormRow>
       <FormRow label="Breakfast price">
@@ -46,6 +61,8 @@ function UpdateSettingsForm() {
           type="number"
           id="breakfast-price"
           defaultValue={settings?.breakfast_price}
+          disabled={isEditing}
+          onBlur={(e) => handleUpdate(e, "breakfast_price")}
         />
       </FormRow>
     </Form>

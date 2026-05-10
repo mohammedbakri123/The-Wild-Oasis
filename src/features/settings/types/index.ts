@@ -10,14 +10,14 @@ export interface Setting {
   created_at?: string;
 }
 
-export interface SettingForm {
-  id: number;
-  breakfast_price: number;
-  max_booking_length: number;
+// interface SettingForm {
+//   breakfast_price: number;
+//   max_booking_length: number;
 
-  max_guests_per_booking: number;
+//   max_guests_per_booking: number;
 
-  min_booking_length: number;
+//   min_booking_length: number;
 
-  created_at?: string;
-}
+//   created_at?: string;
+// }
+export type SettingForm = Partial<Setting>;

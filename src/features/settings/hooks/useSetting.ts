@@ -19,8 +19,8 @@ export function useEditSetting() {
   >({
     mutationFn: updateSetting,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cabins"] });
-      toast.success("Cabin successfully edited");
+      queryClient.invalidateQueries({ queryKey: ["setting"] });
+      toast.success("Setting successfully edited");
     },
     onError: (err) => {
       toast.error(err.message);
