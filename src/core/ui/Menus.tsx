@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { HiEllipsisVertical } from "react-icons/hi2";
 import styled from "styled-components";
@@ -102,7 +102,9 @@ function Toggle({ id }: { id: string }) {
 
   function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
-    const rect = (e.target as HTMLElement).closest("button")!.getBoundingClientRect();
+    const rect = (e.target as HTMLElement)
+      .closest("button")!
+      .getBoundingClientRect();
     setPosition({
       x: window.innerWidth - rect.width - rect.x,
       y: rect.y + rect.height + 8,
@@ -126,10 +128,8 @@ function List({ id, children }: { id: string; children: ReactNode }) {
   if (openId !== id || !position) return null;
 
   return createPortal(
-    <StyledList position={position}>
-      {children}
-    </StyledList>,
-    document.body
+    <StyledList position={position}>{children}</StyledList>,
+    document.body,
   );
 }
 
