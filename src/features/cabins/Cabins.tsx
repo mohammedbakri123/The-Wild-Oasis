@@ -1,9 +1,9 @@
 import Heading from "../../core/ui/Heading";
 import Row from "../../core/ui/Row";
-import CabinTable from "./components/CabinTable-v1";
 import Button from "../../core/ui/Button";
 import CreateCabinForm from "./components/CreateCabinForm";
 import Modal from "../../core/ui/Modal";
+import CabinTable from "./components/CabinTable";
 
 function Cabins() {
   return (

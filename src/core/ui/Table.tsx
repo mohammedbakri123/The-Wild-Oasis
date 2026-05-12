@@ -104,14 +104,14 @@ function Row({ children }: { children: ReactNode }) {
 }
 
 interface BodyProps<T> {
-  data: T[];
+  data: T[] | undefined;
   render: (item: T) => ReactNode;
 }
 
 function Body<T>({ data, render }: BodyProps<T>) {
-  if (!data.length) return <Empty>No data to show at the moment</Empty>;
+  if (!data?.length) return <Empty>No data to show at the moment</Empty>;
 
-  return <StyledBody>{data.map(render)}</StyledBody>;
+  return <StyledBody>{data?.map(render)}</StyledBody>;
 }
 
 Table.Header = Header;

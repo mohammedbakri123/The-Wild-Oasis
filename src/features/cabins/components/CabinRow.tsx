@@ -6,6 +6,7 @@ import { useCreateCabin, useDeleteCabin } from "../hooks/useCabins";
 import CreateCabinForm from "./CreateCabinForm";
 import Modal from "../../../core/ui/Modal";
 import ConfirmDialog from "../../../core/ui/ConfirmDialog";
+import Menus from "../../../core/ui/Menus";
 
 import { HiPencil, HiTrash } from "react-icons/hi2";
 import { HiOutlineDuplicate } from "react-icons/hi";
@@ -83,34 +84,25 @@ export default function CabinRow({ cabin }: CabinRowProps) {
       <Discount>{formatCurrency(cabin.discount)}</Discount>
       <div>
         <Modal>
-          <Modal.Open opens="edit">
-            <button
-              style={{
-                border: "none",
-                background: "none",
-                cursor: "pointer",
-                padding: "0.4rem",
-              }}
-            >
-              <HiPencil />
-            </button>
-          </Modal.Open>
+          <Menus.Menu>
+            <Menus.Toggle id="actions" />
+            <Menus.List id="actions">
+              <Modal.Open opens="edit">
+                <Menus.Button icon={<HiPencil />}>Edit</Menus.Button>
+              </Modal.Open>
+              <Modal.Open opens="delete">
+                <Menus.Button icon={<HiTrash />}>Delete</Menus.Button>
+              </Modal.Open>
+              <Modal.Open opens="dublicate">
+                <Menus.Button icon={<HiOutlineDuplicate />}>
+                  Duplicate
+                </Menus.Button>
+              </Modal.Open>
+            </Menus.List>
+          </Menus.Menu>
           <Modal.Window name="edit">
             <CreateCabinForm cabinToEdit={cabin} />
           </Modal.Window>
-
-          <Modal.Open opens="delete">
-            <button
-              style={{
-                border: "none",
-                background: "none",
-                cursor: "pointer",
-                padding: "0.4rem",
-              }}
-            >
-              <HiTrash />
-            </button>
-          </Modal.Open>
           <Modal.Window name="delete">
             <ConfirmDialog
               title="Delete cabin"
@@ -120,18 +112,6 @@ export default function CabinRow({ cabin }: CabinRowProps) {
               onConfirm={() => deleteCabin(cabin.id)}
             />
           </Modal.Window>
-          <Modal.Open opens="dublicate">
-            <button
-              style={{
-                border: "none",
-                background: "none",
-                cursor: "pointer",
-                padding: "0.4rem",
-              }}
-            >
-              <HiOutlineDuplicate />
-            </button>
-          </Modal.Open>
           <Modal.Window name="dublicate">
             <ConfirmDialog
               title="Dublicate cabin"
