@@ -100,6 +100,7 @@ function Toggle({ id }: { id: string }) {
   if (!context) throw new Error("Toggle must be used within a Menus");
   const { openId, close, open, setPosition } = context;
 
+  //open the menu and set the position
   function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
     const rect = (e.target as HTMLElement)
