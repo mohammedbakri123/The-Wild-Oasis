@@ -6,6 +6,7 @@ import ErrorFallback from "../../../core/ui/ErrorFallback";
 import Table from "../../../core/ui/Table";
 import Menus from "../../../core/ui/Menus";
 import { useSearchParams } from "react-router-dom";
+import type { Cabin } from "../types";
 
 export default function CabinTable() {
   const { data: cabins, isLoading, error } = useCabins();
@@ -21,14 +22,44 @@ export default function CabinTable() {
   if (isLoading) return <Spinner />;
 
   const filterValue = searchParams.get("discount") || "all";
+  const sortByValue = searchParams.get("sortBy") || "name-asc";
 
-  let filteredCabins;
+  let filteredCabins: Cabin[] = cabins ?? [];
 
-  if (filterValue === "all") filteredCabins = cabins;
   if (filterValue === "no-discount")
-    filteredCabins = cabins?.filter((cabin) => cabin.discount === 0);
+    filteredCabins = cabins?.filter((cabin) => cabin.discount === 0) ?? [];
   if (filterValue === "with-discount")
-    filteredCabins = cabins?.filter((cabin) => cabin.discount !== 0);
+    filteredCabins = cabins?.filter((cabin) => cabin.discount !== 0) ?? [];
+
+  //sorting
+  const [field, direction] = sortByValue.split("-") as [string, "asc" | "desc"];
+  const modifier = direction === "asc" ? 1 : -1;
+  const sortedCabins = [...filteredCabins].sort((a, b) => {
+    let aVal: string | number, bVal: string | number;
+    switch (field) {
+      case "name":
+        aVal = a.name;
+        bVal = b.name;
+        break;
+      case "regularPrice":
+        aVal = a.regular_price;
+        bVal = b.regular_price;
+        break;
+      case "maxCapacity":
+        aVal = a.max_capacity;
+        bVal = b.max_capacity;
+        break;
+      case "discount":
+        aVal = a.discount;
+        bVal = b.discount;
+        break;
+      default:
+        aVal = 0;
+        bVal = 0;
+    }
+    return (aVal > bVal ? 1 : -1) * modifier;
+  });
+
   return (
     <Menus>
       <Table columns=" 0.6fr 1.8fr 2.2fr 1fr 1fr 1fr">
@@ -40,7 +71,7 @@ export default function CabinTable() {
           <div>Discount</div>
         </Table.Header>
         <Table.Body
-          data={filteredCabins}
+          data={sortedCabins}
           render={(cabin) => <CabinRow cabin={cabin} key={cabin.id} />}
         />
       </Table>
