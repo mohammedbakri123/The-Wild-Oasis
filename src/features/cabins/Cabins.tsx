@@ -8,25 +8,22 @@ import CabinTableOperation from "./components/CabinTableOperation";
 
 function Cabins() {
   return (
-    <>
-      <Row type="horizontal">
+    <Row type="vertical">
+      <Row>
         <Heading as="h1">All cabins</Heading>
         <CabinTableOperation />
       </Row>
 
-      <Row type="vertical">
-        <CabinTable />
-
-        <Modal>
-          <Modal.Open opens="cabin-form">
-            <Button>Add new cabin</Button>
-          </Modal.Open>
-          <Modal.Window name="cabin-form">
-            <CreateCabinForm />
-          </Modal.Window>
-        </Modal>
-      </Row>
-    </>
+      <CabinTable />
+      <Modal>
+        <Modal.Open opens="cabin-form">
+          <Button>Add new cabin</Button>
+        </Modal.Open>
+        <Modal.Window name="cabin-form">
+          <CreateCabinForm />
+        </Modal.Window>
+      </Modal>
+    </Row>
   );
 }
 

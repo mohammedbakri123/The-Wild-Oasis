@@ -6,6 +6,7 @@ import Table from "../../../core/ui/Table";
 
 import { formatCurrency } from "../../../core/utils/helpers";
 import { formatDistanceFromNow } from "../../../core/utils/helpers";
+import type { Booking } from "../types";
 
 const Cabin = styled.div`
   font-size: 1.6rem;
@@ -34,20 +35,11 @@ const Amount = styled.div`
   font-weight: 500;
 `;
 
-function BookingRow({
-  booking: {
-    id: bookingId,
-    created_at,
-    startDate,
-    endDate,
-    numNights,
-    numGuests,
-    totalPrice,
-    status,
-    guests: { fullName: guestName, email },
-    cabins: { name: cabinName },
-  },
-}) {
+interface BookingRowProps {
+  booking: Booking;
+}
+
+function BookingRow({ booking }: BookingRowProps) {
   const statusToTagName = {
     unconfirmed: "blue",
     "checked-in": "green",
@@ -56,29 +48,31 @@ function BookingRow({
 
   return (
     <Table.Row>
-      <Cabin>{cabinName}</Cabin>
+      <Cabin>{booking.cabins?.name}</Cabin>
 
       <Stacked>
-        <span>{guestName}</span>
-        <span>{email}</span>
+        <span>{booking.num_guests}</span>
+        <span>{booking.guests?.email}</span>
       </Stacked>
 
       <Stacked>
         <span>
-          {isToday(new Date(startDate))
+          {isToday(new Date(booking.start_date))
             ? "Today"
-            : formatDistanceFromNow(startDate)}{" "}
-          &rarr; {numNights} night stay
+            : formatDistanceFromNow(booking.start_date)}{" "}
+          &rarr; {booking.num_nights} night stay
         </span>
         <span>
-          {format(new Date(startDate), "MMM dd yyyy")} &mdash;{" "}
-          {format(new Date(endDate), "MMM dd yyyy")}
+          {format(new Date(booking.start_date), "MMM dd yyyy")} &mdash;{" "}
+          {format(new Date(booking.end_date), "MMM dd yyyy")}
         </span>
       </Stacked>
 
-      <Tag type={statusToTagName[status]}>{status.replace("-", " ")}</Tag>
+      <Tag type={statusToTagName[booking.status]}>
+        {booking.status.replace("-", " ")}
+      </Tag>
 
-      <Amount>{formatCurrency(totalPrice)}</Amount>
+      <Amount>{formatCurrency(booking.total_price)}</Amount>
     </Table.Row>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { isFuture, isPast, isToday } from "date-fns";
-import supabase from "../services/supabase";
+import { supabase } from "../services/supabase";
 import Button from "../ui/Button";
 import { subtractDates } from "../utils/helpers";
 
@@ -16,88 +16,118 @@ import { guests } from "./data-guests";
 // };
 
 async function deleteGuests() {
-  const { error } = await supabase.from("guests").delete().gt("id", 0);
-  if (error) console.log(error.message);
+  console.log("Deleting guests...");
+  const { error } = await supabase.from("guests").delete().gt("id", 0).select();
+  if (error) {
+    console.log("Delete guests error:", error.message);
+  } else {
+    console.log("Guests deleted");
+  }
 }
 
 async function deleteCabins() {
+  console.log("Deleting cabins...");
   const { error } = await supabase.from("cabins").delete().gt("id", 0);
-  if (error) console.log(error.message);
+  if (error) console.log("Delete cabins error:", error.message);
 }
 
 async function deleteBookings() {
+  console.log("Deleting bookings...");
   const { error } = await supabase.from("bookings").delete().gt("id", 0);
-  if (error) console.log(error.message);
+  if (error) console.log("Delete bookings error:", error.message);
 }
 
 async function createGuests() {
-  const { error } = await supabase.from("guests").insert(guests);
-  if (error) console.log(error.message);
+  console.log("Creating guests...");
+  const { data, error } = await supabase.from("guests").insert(guests).select();
+  if (error) {
+    console.log("Guests error:", error.message);
+    console.log("Details:", error.details);
+  } else {
+    console.log("Created guests:", data?.length);
+  }
 }
 
 async function createCabins() {
-  const { error } = await supabase.from("cabins").insert(cabins);
-  if (error) console.log(error.message);
+  console.log("Creating cabins...");
+  const { data, error } = await supabase.from("cabins").insert(cabins).select();
+  if (error) {
+    console.log("Create cabins error:", error.message);
+  } else {
+    console.log("Created cabins:", data?.length);
+  }
 }
 
 async function createBookings() {
-  // Bookings need a guestId and a cabinId. We can't tell Supabase IDs for each object, it will calculate them on its own. So it might be different for different people, especially after multiple uploads. Therefore, we need to first get all guestIds and cabinIds, and then replace the original IDs in the booking data with the actual ones from the DB
-  const { data: guestsIds } = await supabase
+  const { data: guestsData } = await supabase
     .from("guests")
     .select("id")
     .order("id");
-  const allGuestIds = guestsIds.map((cabin) => cabin.id);
-  const { data: cabinsIds } = await supabase
+  const allGuestIds = guestsData?.map((g) => g.id) || [];
+
+  const { data: cabinsData } = await supabase
     .from("cabins")
     .select("id")
     .order("id");
-  const allCabinIds = cabinsIds.map((cabin) => cabin.id);
+  const allCabinIds = cabinsData?.map((c) => c.id) || [];
+
+  if (allGuestIds.length === 0 || allCabinIds.length === 0) {
+    console.log("No guests or cabins found. Run Upload ALL first.");
+    return;
+  }
 
   const finalBookings = bookings.map((booking) => {
     // Here relying on the order of cabins, as they don't have and ID yet
-    const cabin = cabins.at(booking.cabinId - 1);
-    const numNights = subtractDates(booking.endDate, booking.startDate);
-    const cabinPrice = numNights * (cabin.regularPrice - cabin.discount);
-    const extrasPrice = booking.hasBreakfast
-      ? numNights * 15 * booking.numGuests
+    const cabin = cabins.at(booking.cabin_id - 1);
+    const numNights = subtractDates(booking.end_date, booking.start_date);
+    const cabinPrice = numNights * (cabin?.regular_price - cabin.discount);
+    const extrasPrice = booking.has_breakfast
+      ? numNights * 15 * booking.num_guests
       : 0; // hardcoded breakfast price
     const totalPrice = cabinPrice + extrasPrice;
 
     let status;
     if (
-      isPast(new Date(booking.endDate)) &&
-      !isToday(new Date(booking.endDate))
+      isPast(new Date(booking.end_date)) &&
+      !isToday(new Date(booking.end_date))
     )
       status = "checked-out";
     if (
-      isFuture(new Date(booking.startDate)) ||
-      isToday(new Date(booking.startDate))
+      isFuture(new Date(booking.start_date)) ||
+      isToday(new Date(booking.start_date))
     )
       status = "unconfirmed";
     if (
-      (isFuture(new Date(booking.endDate)) ||
-        isToday(new Date(booking.endDate))) &&
-      isPast(new Date(booking.startDate)) &&
-      !isToday(new Date(booking.startDate))
+      (isFuture(new Date(booking.end_date)) ||
+        isToday(new Date(booking.end_date))) &&
+      isPast(new Date(booking.start_date)) &&
+      !isToday(new Date(booking.start_date))
     )
       status = "checked-in";
 
     return {
       ...booking,
-      numNights,
-      cabinPrice,
-      extrasPrice,
-      totalPrice,
-      guestId: allGuestIds.at(booking.guestId - 1),
-      cabinId: allCabinIds.at(booking.cabinId - 1),
+      num_nights: numNights,
+      cabin_price: cabinPrice,
+      extra_price: extrasPrice,
+      total_price: totalPrice,
+      guest_id: allGuestIds.at(booking.guest_id - 1),
+      cabin_id: allCabinIds.at(booking.cabin_id - 1),
       status,
     };
   });
 
-  console.log(finalBookings);
-
-  const { error } = await supabase.from("bookings").insert(finalBookings);
-  if (error) console.log(error.message);
+  console.log("Creating bookings...");
+  const { data, error } = await supabase
+    .from("bookings")
+    .insert(finalBookings)
+    .select();
+  if (error) {
+    console.log("Create bookings error:", error.message);
+    console.log("Details:", error.details);
+  } else {
+    console.log("Created bookings:", data?.length);
+  }
 }
 
 function Uploader() {
@@ -105,16 +135,15 @@ function Uploader() {
 
   async function uploadAll() {
     setIsLoading(true);
-    // Bookings need to be deleted FIRST
+    // Bookings must be deleted first because of foreign key constraints
     await deleteBookings();
     await deleteGuests();
     await deleteCabins();
 
-    // Bookings need to be created LAST
+    // Now create fresh data
     await createGuests();
     await createCabins();
     await createBookings();
-
     setIsLoading(false);
   }
 
