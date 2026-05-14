@@ -8,7 +8,6 @@ import Spinner from "../../../core/ui/Spinner";
 
 function BookingTable() {
   const { data: bookings, error, isPending } = useBookings();
-  console.log(bookings);
 
   if (error) {
     toast.error(error.message);

@@ -2,12 +2,32 @@ import { getToday } from "../../../core/utils/helpers";
 import { supabase } from "../../../core/services/supabase";
 import type { Booking, BookingForm } from "../types";
 
-export async function getBookings(): Promise<Booking[]> {
-  const { data, error } = await supabase
+export interface filterInterface {
+  field: string;
+  value: string;
+}
+
+export interface SortInterface {
+  field: string;
+  direction: string;
+}
+
+export async function getBookings(
+  filter: filterInterface | null,
+  sort: SortInterface | null,
+): Promise<Booking[]> {
+  let query = supabase
     .from("bookings")
     .select(
       "*, cabins(name, image), guests(full_name, email, nationality, country_flag)",
     );
+
+  if (filter) query = query.eq(filter.field, filter.value);
+
+  if (sort)
+    query = query.order(sort.field, { ascending: sort.direction === "asc" });
+
+  const { data, error } = await query;
   if (error) {
     console.error(error);
     throw new Error("no Booking found");
