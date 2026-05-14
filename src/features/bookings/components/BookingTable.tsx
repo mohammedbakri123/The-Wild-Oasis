@@ -1,6 +1,6 @@
 import BookingRow from "./BookingRow";
-import Table from "../../core/ui/Table";
-import Menus from "../../core/ui/Menus";
+import Table from "../../../core/ui/Table";
+import Menus from "../../../core/ui/Menus";
 
 function BookingTable() {
   const bookings = [];

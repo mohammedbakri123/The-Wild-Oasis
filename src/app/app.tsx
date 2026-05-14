@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 //Pages
 import Dashboard from "../core/pages/Dashboard";
 import Account from "../core/pages/Account";
-import Bookings from "../core/pages/Bookings";
+import Bookings from "../features/bookings/Bookings";
 import Cabins from "../features/cabins/Cabins";
 import Login from "../core/pages/Login";
 import PageNotFound from "../core/pages/PageNotFound";

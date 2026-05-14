@@ -1,7 +1,20 @@
-import { getToday } from "../utils/helpers";
-import {supabase} from "./supabase";
+import { getToday } from "../../../core/utils/helpers";
+import { supabase } from "../../../core/services/supabase";
+import type { Booking } from "../types";
 
-export async function getBooking(id) {
+export async function getBookings(): Promise<Booking[]> {
+  const { data, error } = await supabase.from("bookings").select("*");
+  if (error) {
+    console.error(error);
+    throw new Error("no Booking found");
+  }
+
+  return data as Booking[];
+}
+
+console.log(getBookings());
+
+export async function getBooking(id: number) {
   const { data, error } = await supabase
     .from("bookings")
     .select("*, cabins(*), guests(*)")
@@ -55,7 +68,7 @@ export async function getStaysTodayActivity() {
     .from("bookings")
     .select("*, guests(fullName, nationality, countryFlag)")
     .or(
-      `and(status.eq.unconfirmed,startDate.eq.${getToday()}),and(status.eq.checked-in,endDate.eq.${getToday()})`
+      `and(status.eq.unconfirmed,startDate.eq.${getToday()}),and(status.eq.checked-in,endDate.eq.${getToday()})`,
     )
     .order("created_at");
 

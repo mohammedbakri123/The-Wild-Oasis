@@ -7,10 +7,13 @@ import {
   HiOutlineHomeModern,
 } from "react-icons/hi2";
 
-import DataItem from "../../core/ui/DataItem";
-import { Flag } from "../../core/ui/Flag";
+import DataItem from "../../../core/ui/DataItem";
+import { Flag } from "../../../core/ui/Flag";
 
-import { formatDistanceFromNow, formatCurrency } from "../../core/utils/helpers";
+import {
+  formatDistanceFromNow,
+  formatCurrency,
+} from "../../../core/utils/helpers";
 
 const StyledBookingDataBox = styled.section`
   /* Box */
@@ -169,7 +172,7 @@ function BookingDataBox({ booking }) {
 
             {hasBreakfast &&
               ` (${formatCurrency(cabinPrice)} cabin + ${formatCurrency(
-                extrasPrice
+                extrasPrice,
               )} breakfast)`}
           </DataItem>
 

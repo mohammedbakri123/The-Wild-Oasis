@@ -18,11 +18,11 @@ export default function CabinTableOperation() {
           { value: "name-asc", label: "Name (A-Z)" },
           { value: "name-desc", label: "Name (Z-A)" },
 
-          { value: "regularPrice-asc", label: "Price (Low First)" },
-          { value: "regularPrice-desc", label: "Price (High First)" },
+          { value: "regular_price-asc", label: "Price (Low First)" },
+          { value: "regular_price-desc", label: "Price (High First)" },
 
-          { value: "maxCapacity-asc", label: "Capacity (Small First)" },
-          { value: "maxCapacity-desc", label: "Capacity (Large First)" },
+          { value: "max_capacity-asc", label: "Capacity (Small First)" },
+          { value: "max_capacity-desc", label: "Capacity (Large First)" },
 
           { value: "discount-asc", label: "Discount (Low First)" },
           { value: "discount-desc", label: "Discount (High First)" },

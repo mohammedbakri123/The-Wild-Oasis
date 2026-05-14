@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import BookingDataBox from "../../features/bookings/BookingDataBox";
+import BookingDataBox from "../bookings/components/BookingDataBox";
 
 import Row from "../../core/ui/Row";
 import Heading from "../../core/ui/Heading";

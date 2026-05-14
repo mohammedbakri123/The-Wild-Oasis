@@ -1,14 +1,14 @@
 import styled from "styled-components";
 
 import BookingDataBox from "./BookingDataBox";
-import Row from "../../core/ui/Row";
-import Heading from "../../core/ui/Heading";
-import Tag from "../../core/ui/Tag";
-import ButtonGroup from "../../core/ui/ButtonGroup";
-import Button from "../../core/ui/Button";
-import ButtonText from "../../core/ui/ButtonText";
+import Row from "../../../core/ui/Row";
+import Heading from "../../../core/ui/Heading";
+import Tag from "../../../core/ui/Tag";
+import ButtonGroup from "../../../core/ui/ButtonGroup";
+import Button from "../../../core/ui/Button";
+import ButtonText from "../../../core/ui/ButtonText";
 
-import { useMoveBack } from "../../core/hooks/useMoveBack";
+import { useMoveBack } from "../../../core/hooks/useMoveBack";
 
 const HeadingGroup = styled.div`
   display: flex;
