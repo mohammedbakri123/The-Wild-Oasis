@@ -5,7 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 //Pages
 import Dashboard from "../core/pages/Dashboard";
 import Account from "../core/pages/Account";
-import Bookings from "../features/bookings/Bookings";
+import Bookings from "../features/bookings/pages/Bookings";
+import Booking from "../features/bookings/pages/Booking";
+
 import Cabins from "../features/cabins/Cabins";
 import Login from "../core/pages/Login";
 import PageNotFound from "../core/pages/PageNotFound";
@@ -48,6 +50,7 @@ function App() {
 
             <Route path="account" element={<Account />} />
             <Route path="bookings" element={<Bookings />} />
+            <Route path="bookings/:bookingId" element={<Booking />} />
             <Route path="cabins" element={<Cabins />} />
             <Route path="login" element={<Login />} />
             <Route path="settings" element={<Settings />} />

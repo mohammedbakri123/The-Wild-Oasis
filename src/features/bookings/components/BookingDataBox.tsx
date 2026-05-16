@@ -14,6 +14,7 @@ import {
   formatDistanceFromNow,
   formatCurrency,
 } from "../../../core/utils/helpers";
+import type { Booking } from "../types";
 
 const StyledBookingDataBox = styled.section`
   /* Box */
@@ -103,88 +104,75 @@ const Footer = styled.footer`
   color: var(--color-grey-500);
   text-align: right;
 `;
-
+interface BookingRowProps {
+  booking: Booking;
+}
 // A purely presentational component
-function BookingDataBox({ booking }) {
-  const {
-    created_at,
-    start_date,
-    end_date,
-    num_nights,
-    num_guests,
-    cabin_price,
-    extra_price,
-    total_price,
-    has_breakfast,
-    observations,
-    is_paid,
-    guests: {
-      full_name: guestName,
-      email,
-      nationality: country,
-      country_flag: countryFlag,
-    },
-    cabins: { name: cabinName },
-  } = booking;
-
+function BookingDataBox({ booking }: BookingRowProps) {
   return (
     <StyledBookingDataBox>
       <Header>
         <div>
           <HiOutlineHomeModern />
           <p>
-            {num_nights} nights in Cabin <span>{cabinName}</span>
+            {booking.num_nights} nights in Cabin{" "}
+            <span>{booking.cabins?.name}</span>
           </p>
         </div>
 
         <p>
-          {format(new Date(start_date), "EEE, MMM dd yyyy")} (
-          {isToday(new Date(start_date))
+          {format(new Date(booking.start_date), "EEE, MMM dd yyyy")} (
+          {isToday(new Date(booking.start_date))
             ? "Today"
-            : formatDistanceFromNow(start_date)}
-          ) &mdash; {format(new Date(end_date), "EEE, MMM dd yyyy")}
+            : formatDistanceFromNow(booking.start_date)}
+          ) &mdash; {format(new Date(booking.end_date), "EEE, MMM dd yyyy")}
         </p>
       </Header>
 
       <Section>
         <Guest>
-          {countryFlag && <Flag src={countryFlag} alt={`Flag of ${country}`} />}
+          {booking.guests?.country_flag && (
+            <Flag src={booking.guests?.country_flag} alt={`🏁`} />
+          )}
           <p>
-            {guestName} {num_guests > 1 ? `+ ${num_guests - 1} guests` : ""}
+            {booking.guests?.full_name}{" "}
+            {booking.num_guests > 1 ? `+ ${booking.num_guests - 1} guests` : ""}
           </p>
           <span>&bull;</span>
-          <p>{email}</p>
+          <p>{booking.guests?.email}</p>
         </Guest>
 
-        {observations && (
+        {booking.observations && (
           <DataItem
             icon={<HiOutlineChatBubbleBottomCenterText />}
             label="Observations"
           >
-            {observations}
+            {booking.observations}
           </DataItem>
         )}
 
         <DataItem icon={<HiOutlineCheckCircle />} label="Breakfast included?">
-          {has_breakfast ? "Yes" : "No"}
+          {booking.has_breakfast ? "Yes" : "No"}
         </DataItem>
 
-        <Price is_paid={is_paid}>
+        <Price is_paid={booking.is_paid}>
           <DataItem icon={<HiOutlineCurrencyDollar />} label={`Total price`}>
-            {formatCurrency(total_price)}
+            {formatCurrency(booking.total_price)}
 
-            {has_breakfast &&
-              ` (${formatCurrency(cabin_price)} cabin + ${formatCurrency(
-                extra_price,
+            {booking.has_breakfast &&
+              ` (${formatCurrency(booking.cabin_price)} cabin + ${formatCurrency(
+                booking.extra_price,
               )} breakfast)`}
           </DataItem>
 
-          <p>{is_paid ? "Paid" : "Will pay at property"}</p>
+          <p>{booking.is_paid ? "Paid" : "Will pay at property"}</p>
         </Price>
       </Section>
 
       <Footer>
-        <p>Booked {format(new Date(created_at), "EEE, MMM dd yyyy, p")}</p>
+        <p>
+          Booked {format(new Date(booking.created_at), "EEE, MMM dd yyyy, p")}
+        </p>
       </Footer>
     </StyledBookingDataBox>
   );

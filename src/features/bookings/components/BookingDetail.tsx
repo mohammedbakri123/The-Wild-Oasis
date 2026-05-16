@@ -9,6 +9,11 @@ import Button from "../../../core/ui/Button";
 import ButtonText from "../../../core/ui/ButtonText";
 
 import { useMoveBack } from "../../../core/hooks/useMoveBack";
+import { useBooking } from "../hooks/useBooking";
+import { useParams } from "react-router-dom";
+import Spinner from "../../../core/ui/Spinner";
+import ErrorFallback from "../../../core/ui/ErrorFallback";
+import toast from "react-hot-toast";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -17,8 +22,10 @@ const HeadingGroup = styled.div`
 `;
 
 function BookingDetail() {
-  const booking = {};
-  const status = "checked-in";
+  const { bookingId } = useParams();
+
+  const { data: booking, error, isPending } = useBooking(Number(bookingId));
+  const status = booking?.status || "checked-in";
 
   const moveBack = useMoveBack();
 
@@ -28,11 +35,20 @@ function BookingDetail() {
     "checked-out": "silver",
   };
 
+  if (isPending) return <Spinner />;
+
+  if (error) {
+    toast.error(error.message);
+    return (
+      <ErrorFallback header="Faild to Fetch Booking" message={error.message} />
+    );
+  }
+
   return (
-    <>
+    <Row type="vertical">
       <Row type="horizontal">
         <HeadingGroup>
-          <Heading as="h1">Booking #X</Heading>
+          <Heading as="h1">Booking #{booking?.id}</Heading>
           <Tag type={statusToTagName[status]}>{status.replace("-", " ")}</Tag>
         </HeadingGroup>
         <ButtonText onClick={moveBack}>&larr; Back</ButtonText>
@@ -45,7 +61,7 @@ function BookingDetail() {
           Back
         </Button>
       </ButtonGroup>
-    </>
+    </Row>
   );
 }
 

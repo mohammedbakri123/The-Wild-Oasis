@@ -50,7 +50,7 @@ export async function getBookings(
   return { data: data as Booking[], count };
 }
 
-export async function getBooking(id: number): Promise<Booking> {
+export async function getBooking(id: Number): Promise<Booking> {
   const { data, error } = await supabase
     .from("bookings")
     .select(

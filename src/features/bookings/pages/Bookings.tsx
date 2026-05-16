@@ -1,7 +1,7 @@
-import Heading from "../../core/ui/Heading";
-import Row from "../../core/ui/Row";
-import BookingTable from "./components/BookingTable";
-import BookingTableOperations from "./components/BookingTableOperations";
+import Heading from "../../../core/ui/Heading";
+import Row from "../../../core/ui/Row";
+import BookingTable from "../components/BookingTable";
+import BookingTableOperations from "../components/BookingTableOperations";
 
 function Bookings() {
   return (
