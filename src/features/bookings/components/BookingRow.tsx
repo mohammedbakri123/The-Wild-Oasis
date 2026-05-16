@@ -51,7 +51,7 @@ function BookingRow({ booking }: BookingRowProps) {
       <Cabin>{booking.cabins?.name}</Cabin>
 
       <Stacked>
-        <span>{booking.num_guests}</span>
+        <span>{booking.guests?.full_name}</span>
         <span>{booking.guests?.email}</span>
       </Stacked>
 

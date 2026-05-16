@@ -1,6 +1,7 @@
 import { getToday } from "../../../core/utils/helpers";
 import { supabase } from "../../../core/services/supabase";
 import type { Booking, BookingForm } from "../types";
+import { PAGE_SIZE } from "../../../core/utils/constants";
 
 export interface filterInterface {
   field: string;
@@ -11,15 +12,21 @@ export interface SortInterface {
   field: string;
   direction: string;
 }
+export interface GetBookingsResponse {
+  data: Booking[];
+  count: number | null;
+}
 
 export async function getBookings(
   filter: filterInterface | null,
   sort: SortInterface | null,
-): Promise<Booking[]> {
+  page: number | null,
+): Promise<GetBookingsResponse> {
   let query = supabase
     .from("bookings")
     .select(
       "*, cabins(name, image), guests(full_name, email, nationality, country_flag)",
+      { count: "exact" },
     );
 
   if (filter) query = query.eq(filter.field, filter.value);
@@ -27,13 +34,20 @@ export async function getBookings(
   if (sort)
     query = query.order(sort.field, { ascending: sort.direction === "asc" });
 
-  const { data, error } = await query;
+  if (page) {
+    const from = (page - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+
+    query = query.range(from, to);
+  }
+
+  const { data, error, count } = await query;
   if (error) {
     console.error(error);
     throw new Error("no Booking found");
   }
 
-  return data as Booking[];
+  return { data: data as Booking[], count };
 }
 
 export async function getBooking(id: number): Promise<Booking> {
@@ -57,7 +71,7 @@ export async function getBooking(id: number): Promise<Booking> {
 export async function getBookingsAfterDate(date: Date) {
   const { data, error } = await supabase
     .from("bookings")
-    .select("created_at, totalPrice, extrasPrice")
+    .select("created_at, total_price, extras_price")
     .gte("created_at", date)
     .lte("created_at", getToday({ end: true }));
 
@@ -74,9 +88,9 @@ export async function getStaysAfterDate(date: Date) {
   const { data, error } = await supabase
     .from("bookings")
     // .select('*')
-    .select("*, guests(fullName)")
-    .gte("startDate", date)
-    .lte("startDate", getToday());
+    .select("*, guests(full_name)")
+    .gte("start_date", date)
+    .lte("start_date", getToday());
 
   if (error) {
     console.error(error);
@@ -90,15 +104,15 @@ export async function getStaysAfterDate(date: Date) {
 export async function getStaysTodayActivity() {
   const { data, error } = await supabase
     .from("bookings")
-    .select("*, guests(fullName, nationality, countryFlag)")
+    .select("*, guests(full_name, nationality, country_flag)")
     .or(
-      `and(status.eq.unconfirmed,startDate.eq.${getToday()}),and(status.eq.checked-in,endDate.eq.${getToday()})`,
+      `and(status.eq.unconfirmed,start_date.eq.${getToday()}),and(status.eq.checked-in,end_date.eq.${getToday()})`,
     )
     .order("created_at");
 
   // Equivalent to this. But by querying this, we only download the data we actually need, otherwise we would need ALL bookings ever created
-  // (stay.status === 'unconfirmed' && isToday(new Date(stay.startDate))) ||
-  // (stay.status === 'checked-in' && isToday(new Date(stay.endDate)))
+  // (stay.status === 'unconfirmed' && isToday(new Date(stay.start_date))) ||
+  // (stay.status === 'checked-in' && isToday(new Date(stay.end_date)))
 
   if (error) {
     console.error(error);

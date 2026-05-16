@@ -5,9 +5,10 @@ import { useBookings } from "../hooks/useBooking";
 import ErrorFallback from "../../../core/ui/ErrorFallback";
 import toast from "react-hot-toast";
 import Spinner from "../../../core/ui/Spinner";
+import Pagination from "../../../core/ui/Pagination";
 
 function BookingTable() {
-  const { data: bookings, error, isPending } = useBookings();
+  const { data: bookingsData, error, isPending } = useBookings();
 
   if (error) {
     toast.error(error.message);
@@ -16,9 +17,11 @@ function BookingTable() {
     );
   }
 
-  // if (!bookings?.length) return <Empty resource={"Bookings"} />;
-
   if (isPending) return <Spinner />;
+
+  const bookings = bookingsData?.data || [];
+  const count = bookingsData?.count || 0;
+
   return (
     <Menus>
       <Table columns="0.6fr 2fr 2.4fr 1.4fr 1fr 3.2rem">
@@ -37,6 +40,9 @@ function BookingTable() {
             <BookingRow key={booking.id} booking={booking} />
           )}
         />
+        <Table.Footer>
+          <Pagination count={count} />
+        </Table.Footer>
       </Table>
     </Menus>
   );
