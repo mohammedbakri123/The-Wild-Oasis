@@ -72,7 +72,7 @@ const Guest = styled.div`
   }
 `;
 
-const Price = styled.div`
+const Price = styled.div<{ is_paid: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;

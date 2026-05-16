@@ -16,6 +16,7 @@ import NewUsers from "../core/pages/Users";
 import GlobalStyles from "../core/styles/GlobalStyles";
 import Layout from "../core/layout/layout";
 import ToastProvider from "../core/ui/ToastProvider";
+import Checkin from "../features/check-in-out/pages/checkin";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,6 +52,7 @@ function App() {
             <Route path="account" element={<Account />} />
             <Route path="bookings" element={<Bookings />} />
             <Route path="bookings/:bookingId" element={<Booking />} />
+            <Route path="checkin/:bookingId" element={<Checkin />} />
             <Route path="cabins" element={<Cabins />} />
             <Route path="login" element={<Login />} />
             <Route path="settings" element={<Settings />} />
