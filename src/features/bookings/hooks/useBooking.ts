@@ -1,14 +1,16 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getBooking,
   getBookings,
+  updateBooking,
   type filterInterface,
   type GetBookingsResponse,
   type SortInterface,
 } from "../service/apiBookings";
 import { useSearchParams } from "react-router-dom";
 import { PAGE_SIZE } from "../../../core/utils/constants";
-import type { Booking } from "../types";
+import type { Booking, BookingForm } from "../types";
+import toast from "react-hot-toast";
 
 export function useBookings() {
   const [searchParams] = useSearchParams();
@@ -64,4 +66,23 @@ export function useBooking(id: Number) {
   });
 
   return { isPending, data, error };
+}
+
+export function useCheckin() {
+  const queryClient = useQueryClient();
+  const { mutate: checkin, isPending: isCheckingIn } = useMutation<
+    Booking,
+    Error,
+    { id: Number; data: BookingForm }
+  >({
+    mutationFn: ({ id, data }) => updateBooking(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["booking"] });
+      toast.success("Booking successfully checked in");
+    },
+    onError: (err) => {
+      toast.error(err.message);
+    },
+  });
+  return { checkin, isCheckingIn };
 }
