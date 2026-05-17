@@ -1,5 +1,5 @@
-import Heading from "../ui/Heading";
-import Row from "../ui/Row";
+import Heading from "../../../core/ui/Heading";
+import Row from "../../../core/ui/Row";
 
 function Account() {
   return (

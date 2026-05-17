@@ -1,10 +1,10 @@
 import { useForm } from "react-hook-form";
-import Button from "../../core/ui/Button";
-import Form from "../../core/ui/Form";
-import FormRow from "../../core/ui/FormRow";
-import Input from "../../core/ui/Input";
+import Button from "../../../core/ui/Button";
+import Form from "../../../core/ui/Form";
+import FormRow from "../../../core/ui/FormRow";
+import Input from "../../../core/ui/Input";
 
-import { useUpdateUser } from "./useUpdateUser";
+import { useUpdateUser } from "../hooks/useUpdateUser";
 
 function UpdatePasswordForm() {
   const { register, handleSubmit, formState, getValues, reset } = useForm();

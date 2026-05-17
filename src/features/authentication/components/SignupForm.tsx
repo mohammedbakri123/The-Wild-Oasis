@@ -1,7 +1,7 @@
-import Button from "../../core/ui/Button";
-import Form from "../../core/ui/Form";
-import FormRow from "../../core/ui/FormRow";
-import Input from "../../core/ui/Input";
+import Button from "../../../core/ui/Button";
+import Form from "../../../core/ui/Form";
+import FormRow from "../../../core/ui/FormRow";
+import Input from "../../../core/ui/Input";
 
 // Email regex: /\S+@\S+\.\S+/
 

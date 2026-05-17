@@ -1,12 +1,12 @@
 import { useState } from "react";
 
-import Button from "../../core/ui/Button";
-import FileInput from "../../core/ui/FileInput";
-import Form from "../../core/ui/Form";
-import FormRow from "../../core/ui/FormRow";
-import Input from "../../core/ui/Input";
+import Button from "../../../core/ui/Button";
+import FileInput from "../../../core/ui/FileInput";
+import Form from "../../../core/ui/Form";
+import FormRow from "../../../core/ui/FormRow";
+import Input from "../../../core/ui/Input";
 
-import { useUser } from "./useUser";
+import { useUser } from "../hooks/useUser";
 
 function UpdateUserDataForm() {
   // We don't need the loading state, and can immediately use the user data, because we know that it has already been loaded at this point
