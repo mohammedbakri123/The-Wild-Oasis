@@ -9,12 +9,14 @@ import ButtonText from "../../../core/ui/ButtonText";
 
 import { useMoveBack } from "../../../core/hooks/useMoveBack";
 import { useBooking, useCheckin } from "../../bookings/hooks/useBooking";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import ErrorFallback from "../../../core/ui/ErrorFallback";
 import Spinner from "../../../core/ui/Spinner";
 import Checkbox from "../../../core/ui/Checkbox";
 import { useEffect, useState } from "react";
+import { useSettings } from "../../settings/hooks/useSetting";
+import { formatCurrency } from "../../../core/utils/helpers";
 
 const Box = styled.div`
   /* Box */
@@ -25,30 +27,56 @@ const Box = styled.div`
 `;
 
 function CheckinBooking() {
-  const [confirmedPaid, SetConfirmedPaid] = useState(false);
-
   const { bookingId } = useParams();
 
   const { data: booking, error, isPending } = useBooking(Number(bookingId));
+  const {
+    data: setting,
+    error: settingError,
+    isLoading: isSettingLoading,
+  } = useSettings();
 
   useEffect(() => {
     SetConfirmedPaid(booking?.is_paid ?? false);
   }, [booking]);
 
   const { checkin, isCheckingIn } = useCheckin();
+
+  const [confirmedPaid, SetConfirmedPaid] = useState(false);
+  const [hasBreakfast, SetHasBreakfast] = useState(
+    booking?.has_breakfast ?? false,
+  );
+  useEffect(() => {
+    SetHasBreakfast(booking?.has_breakfast ?? false);
+  }, [booking]);
+  const moveBack = useMoveBack();
+  const navigator = useNavigate();
   function handleCheckin() {
+    if (!booking || !setting) return;
     checkin({
       id: Number(bookingId),
       data: {
         status: "checked-in",
         is_paid: true,
+        has_breakfast: hasBreakfast,
+        extra_price: booking.extra_price + setting.breakfast_price,
+        total_price: booking.total_price + setting.breakfast_price,
       },
     });
+    navigator(`/bookings/${booking.id}`);
   }
-  const moveBack = useMoveBack();
 
-  if (isPending) return <Spinner />;
+  if (isPending || isSettingLoading) return <Spinner />;
 
+  if (settingError) {
+    toast.error(settingError.message);
+    return (
+      <ErrorFallback
+        header="Faild to Fetch Booking"
+        message={settingError.message}
+      />
+    );
+  }
   if (error) {
     toast.error(error.message);
     return (
@@ -63,6 +91,14 @@ function CheckinBooking() {
       />
     );
   }
+  if (!setting) {
+    return (
+      <ErrorFallback
+        header="Faild to Fetch setting"
+        message="Faild to Fetch breakfast Price"
+      />
+    );
+  }
 
   return (
     <Row type="vertical">
@@ -74,18 +110,37 @@ function CheckinBooking() {
       <BookingDataBox booking={booking} />
       <Box>
         <Checkbox
+          checked={hasBreakfast}
+          onChange={() => SetHasBreakfast((v) => !v)}
+          id="breakfast"
+          disabled={booking.status !== "unconfirmed" || booking.has_breakfast}
+        >
+          {booking.has_breakfast
+            ? "Breakfast already included in this booking"
+            : `Add breakfast for ${booking.guests?.full_name}?`}
+        </Checkbox>
+      </Box>
+      <Box>
+        <Checkbox
           checked={confirmedPaid}
           onChange={() => SetConfirmedPaid((v) => !v)}
           id="confirm"
           disabled={booking.is_paid}
         >
           I confirm that {booking.guests?.full_name} has paid the total amount
+          of{" "}
+          {!hasBreakfast
+            ? formatCurrency(booking.total_price)
+            : `${formatCurrency(booking.total_price + setting.breakfast_price)} (${formatCurrency(booking.total_price)} + ${formatCurrency(setting.breakfast_price)})`}{" "}
         </Checkbox>
       </Box>
+
       <ButtonGroup>
         <Button
           onClick={handleCheckin}
-          disabled={isCheckingIn || !confirmedPaid}
+          disabled={
+            booking.status != "unconfirmed" || !confirmedPaid || isCheckingIn
+          }
         >
           Check in booking #{bookingId}
         </Button>
