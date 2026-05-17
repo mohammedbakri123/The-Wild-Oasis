@@ -2,7 +2,7 @@ import Heading from "../../core/ui/Heading";
 import Row from "../../core/ui/Row";
 import Button from "../../core/ui/Button";
 import CreateCabinForm from "./components/CreateCabinForm";
-import Modal from "../../core/ui/Modal";
+import Model from "../../core/ui/Model";
 import CabinTable from "./components/CabinTable";
 import CabinTableOperation from "./components/CabinTableOperation";
 
@@ -15,14 +15,14 @@ function Cabins() {
       </Row>
 
       <CabinTable />
-      <Modal>
-        <Modal.Open opens="cabin-form">
+      <Model>
+        <Model.Open opens="cabin-form">
           <Button>Add new cabin</Button>
-        </Modal.Open>
-        <Modal.Window name="cabin-form">
+        </Model.Open>
+        <Model.Window name="cabin-form">
           <CreateCabinForm />
-        </Modal.Window>
-      </Modal>
+        </Model.Window>
+      </Model>
     </Row>
   );
 }

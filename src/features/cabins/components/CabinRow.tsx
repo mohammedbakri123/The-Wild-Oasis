@@ -4,7 +4,7 @@ import type { Cabin } from "../types";
 import { formatCurrency } from "../../../core/utils/helpers";
 import { useCreateCabin, useDeleteCabin } from "../hooks/useCabins";
 import CreateCabinForm from "./CreateCabinForm";
-import Modal from "../../../core/ui/Modal";
+import Model from "../../../core/ui/Model";
 import ConfirmDialog from "../../../core/ui/ConfirmDialog";
 import Menus from "../../../core/ui/Menus";
 
@@ -83,27 +83,27 @@ export default function CabinRow({ cabin }: CabinRowProps) {
       <Price>{formatCurrency(cabin.regular_price)}</Price>
       <Discount>{formatCurrency(cabin.discount)}</Discount>
       <div>
-        <Modal>
+        <Model>
           <Menus.Menu>
             <Menus.Toggle id="actions" />
             <Menus.List id="actions">
-              <Modal.Open opens="edit">
+              <Model.Open opens="edit">
                 <Menus.Button icon={<HiPencil />}>Edit</Menus.Button>
-              </Modal.Open>
-              <Modal.Open opens="delete">
+              </Model.Open>
+              <Model.Open opens="delete">
                 <Menus.Button icon={<HiTrash />}>Delete</Menus.Button>
-              </Modal.Open>
-              <Modal.Open opens="dublicate">
+              </Model.Open>
+              <Model.Open opens="dublicate">
                 <Menus.Button icon={<HiOutlineDuplicate />}>
                   Duplicate
                 </Menus.Button>
-              </Modal.Open>
+              </Model.Open>
             </Menus.List>
           </Menus.Menu>
-          <Modal.Window name="edit">
+          <Model.Window name="edit">
             <CreateCabinForm cabinToEdit={cabin} />
-          </Modal.Window>
-          <Modal.Window name="delete">
+          </Model.Window>
+          <Model.Window name="delete">
             <ConfirmDialog
               title="Delete cabin"
               message="Are you sure you want to delete this cabin permanently? This action cannot be undone."
@@ -111,8 +111,8 @@ export default function CabinRow({ cabin }: CabinRowProps) {
               disabled={isDeleting}
               onConfirm={() => deleteCabin(cabin.id)}
             />
-          </Modal.Window>
-          <Modal.Window name="dublicate">
+          </Model.Window>
+          <Model.Window name="dublicate">
             <ConfirmDialog
               title="Dublicate cabin"
               message="Are you sure you want to Dublicate this cabin?"
@@ -121,8 +121,8 @@ export default function CabinRow({ cabin }: CabinRowProps) {
               disabled={isCreating}
               onConfirm={HandleDublicate}
             />
-          </Modal.Window>
-        </Modal>
+          </Model.Window>
+        </Model>
       </div>
     </TableRow>
   );

@@ -9,7 +9,7 @@ import Button from "../../../core/ui/Button";
 import ButtonText from "../../../core/ui/ButtonText";
 
 import { useMoveBack } from "../../../core/hooks/useMoveBack";
-import { useBooking } from "../hooks/useBooking";
+import { useBooking, useCheckout } from "../hooks/useBooking";
 import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "../../../core/ui/Spinner";
 import ErrorFallback from "../../../core/ui/ErrorFallback";
@@ -26,6 +26,7 @@ function BookingDetail() {
 
   const { data: booking, error, isPending } = useBooking(Number(bookingId));
   const status = booking?.status || "checked-in";
+  const { checkout, isCheckingOut } = useCheckout();
 
   const moveBack = useMoveBack();
   const navigate = useNavigate();
@@ -53,6 +54,15 @@ function BookingDetail() {
     );
   }
 
+  function handleCheckOut() {
+    if (!booking) return;
+    checkout({
+      id: Number(booking.id),
+      data: {
+        status: "checked-out",
+      },
+    });
+  }
   return (
     <Row type="vertical">
       <Row type="horizontal">
@@ -69,6 +79,11 @@ function BookingDetail() {
         {booking.status === "unconfirmed" && (
           <Button onClick={() => navigate(`/checkin/${booking.id}`)}>
             Check in
+          </Button>
+        )}
+        {booking.status === "checked-in" && (
+          <Button disabled={isCheckingOut} onClick={handleCheckOut}>
+            Check out
           </Button>
         )}
         <Button variation="secondary" onClick={moveBack}>

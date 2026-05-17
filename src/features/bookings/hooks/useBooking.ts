@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  deleteBooking,
   getBooking,
   getBookings,
   updateBooking,
@@ -85,4 +86,42 @@ export function useCheckin() {
     },
   });
   return { checkin, isCheckingIn };
+}
+
+export function useCheckout() {
+  const queryClient = useQueryClient();
+  const { mutate: checkout, isPending: isCheckingOut } = useMutation<
+    Booking,
+    Error,
+    { id: Number; data: BookingForm }
+  >({
+    mutationFn: ({ id, data }) => updateBooking(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["booking"] });
+      toast.success("Booking successfully checked out");
+    },
+    onError: (err) => {
+      toast.error(err.message);
+    },
+  });
+  return { checkout, isCheckingOut };
+}
+
+export function useDeleteBooking() {
+  const queryClient = useQueryClient();
+  const { mutate: deleteBookingMutation, isPending: isDeleting } = useMutation<
+    null,
+    Error,
+    Number
+  >({
+    mutationFn: deleteBooking,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["booking"] });
+      toast.success("Booking deleted successfully");
+    },
+    onError: (err) => {
+      toast.error(err.message);
+    },
+  });
+  return { isDeleting, deleteBooking: deleteBookingMutation };
 }

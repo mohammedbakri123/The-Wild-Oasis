@@ -60,6 +60,11 @@ const StyledButton = styled.button`
   &:hover {
     background-color: var(--color-grey-50);
   }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
 
   & svg {
     width: 1.6rem;
@@ -138,23 +143,23 @@ function Button({
   children,
   icon,
   onClick,
+  disabled,
 }: {
   children: ReactNode;
   icon?: ReactNode;
   onClick?: () => void;
+  disabled?: boolean;
 }) {
   const context = useContext(MenusContext);
   if (!context) throw new Error("Button must be used within a Menus");
   const { close } = context;
-
   function handleClick() {
     onClick?.();
     close();
   }
-
   return (
     <li>
-      <StyledButton onClick={handleClick}>
+      <StyledButton onClick={handleClick} disabled={disabled}>
         {icon}
         <span>{children}</span>
       </StyledButton>

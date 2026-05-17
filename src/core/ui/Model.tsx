@@ -62,7 +62,7 @@ interface ModalContextType {
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
-function Modal({ children }: { children: React.ReactNode }) {
+function Model({ children }: { children: React.ReactNode }) {
   const [openName, setOpenName] = useState("");
 
   const close = () => setOpenName("");
@@ -117,7 +117,7 @@ function Window({
   );
 }
 
-Modal.Open = Open;
-Modal.Window = Window;
+Model.Open = Open;
+Model.Window = Window;
 
-export default Modal;
+export default Model;
